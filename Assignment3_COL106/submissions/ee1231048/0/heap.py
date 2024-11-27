@@ -17,125 +17,73 @@ def comp_arrival_time(node1,node2):
 
 
 class Heap:
-    '''
-    Class to implement a heap with a general comparison function
-    '''
-
-    def __init__(self, comparison_function, init_array=[]):
+    def __init__(self, comparison_function):
         '''
+        Initializes the heap with a comparator function.
         Arguments:
-            comparison_function : function : A function that takes in two arguments and returns a boolean value
-            init_array : List[Any] : The initial array to be inserted into the heap
-        Returns:
-            None
-        Description:
-            Initializes a heap with a comparison function
-        Time Complexity:
-            O(n) where n is the number of elements in init_array
+            comparison_function: function : A function to compare two elements
         '''
         self.comparison_function = comparison_function
-        self.heap = init_array[:]
-        self.size = len(init_array)
-        self.build_heap()
-
-    def build_heap(self):
-        '''
-        Converts an unsorted array into a heap.
-        Time Complexity: O(n) where n is the size of the array.
-        '''
-        for i in range((self.size // 2) - 1, -1, -1):  # Start from the last non-leaf node
-            self._heapify_down(i)
+        self.heap = []
 
     def _heapify_up(self, index):
         '''
-        Helper function to maintain heap properties after insertion
-        Time Complexity: O(log(n))
+        Helper function to maintain heap properties after insertion.
         '''
         parent_index = (index - 1) // 2
-        while index > 0 and self.comparison_function(self.heap[index], self.heap[parent_index]):
+        if index > 0 and self.comparison_function(self.heap[index], self.heap[parent_index]):
+            # Swap if the current node violates heap property
             self.heap[index], self.heap[parent_index] = self.heap[parent_index], self.heap[index]
-            index = parent_index
-            parent_index = (index - 1) // 2
+            self._heapify_up(parent_index)
 
     def _heapify_down(self, index):
         '''
-        Helper function to maintain heap properties after extraction
-        Time Complexity: O(log(n))
+        Helper function to maintain heap properties after extraction.
         '''
-        while True:
-            left_child_index = 2 * index + 1
-            right_child_index = 2 * index + 2
-            best = index
+        smallest = index
+        left_child_index = 2 * index + 1
+        right_child_index = 2 * index + 2
 
-            if left_child_index < self.size and self.comparison_function(self.heap[left_child_index], self.heap[best]):
-                best = left_child_index
+        if left_child_index < len(self.heap) and self.comparison_function(self.heap[left_child_index], self.heap[smallest]):
+            smallest = left_child_index
 
-            if right_child_index < self.size and self.comparison_function(self.heap[right_child_index], self.heap[best]):
-                best = right_child_index
+        if right_child_index < len(self.heap) and self.comparison_function(self.heap[right_child_index], self.heap[smallest]):
+            smallest = right_child_index
 
-            if best == index:  # If no swap is needed, break
-                break
-
-            self.heap[index], self.heap[best] = self.heap[best], self.heap[index]
-            index = best
+        if smallest != index:
+            # Swap and recursively heapify
+            self.heap[index], self.heap[smallest] = self.heap[smallest], self.heap[index]
+            self._heapify_down(smallest)
 
     def insert(self, value):
         '''
-        Arguments:
-            value : Any : The value to be inserted into the heap
-        Returns:
-            None
-        Description:
-            Inserts a value into the heap
-        Time Complexity:
-            O(log(n)) where n is the number of elements currently in the heap
+        Inserts a value into the heap.
         '''
         self.heap.append(value)
-        self.size += 1
-        self._heapify_up(self.size - 1)
+        self._heapify_up(len(self.heap) - 1)
 
     def extract(self):
         '''
-        Arguments:
-            None
-        Returns:
-            Any : The value extracted from the top of heap
-        Description:
-            Extracts the value from the top of heap, i.e. removes it from heap
-        Time Complexity:
-            O(log(n)) where n is the number of elements currently in the heap
+        Removes and returns the top of the heap.
         '''
-        if self.size == 0:
-            raise IndexError("Extracting from an empty heap")
+        if not self.heap:
+            raise IndexError("Heap is empty")
         top_value = self.heap[0]
+        # Replace root with the last element
         self.heap[0] = self.heap[-1]
         self.heap.pop()
-        self.size -= 1
-        if self.size > 0:
+        # Restore heap property
+        if self.heap:
             self._heapify_down(0)
         return top_value
 
     def top(self):
         '''
-        Arguments:
-            None
-        Returns:
-            Any : The value at the top of heap
-        Description:
-            Returns the value at the top of heap
-        Time Complexity:
-            O(1)
+        Returns the top value of the heap without removing it.
         '''
-        if self.size == 0:
-            raise IndexError("The heap is empty")
+        if not self.heap:
+            raise IndexError("Heap is empty")
         return self.heap[0]
-
-    def __len__(self):
-        '''
-        Returns:
-            int : The number of elements in the heap
-        '''
-        return self.size
 
 class Heap_crew:
   '''
