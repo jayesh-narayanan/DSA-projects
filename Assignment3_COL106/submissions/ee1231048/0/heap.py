@@ -53,7 +53,7 @@ class Heap:
     Time Complexity: O(log(n))
     '''
     parent_index = (index - 1) // 2
-    if index > 0 and self.comparison_function(self.heap[index], self.heap[parent_index]):
+    if index > 0 and not self.comparison_function(self.heap[index], self.heap[parent_index]):
         self.heap[index], self.heap[parent_index] = self.heap[parent_index], self.heap[index]
         self._heapify_up(parent_index)
 
@@ -66,10 +66,10 @@ class Heap:
       right_child_index = 2 * index + 2
       smallest = index
 
-      if left_child_index < len(self.heap) and self.comparison_function(self.heap[left_child_index], self.heap[smallest]):
+      if left_child_index < len(self.heap) and not self.comparison_function(self.heap[left_child_index], self.heap[smallest]):
           smallest = left_child_index
 
-      if right_child_index < len(self.heap) and self.comparison_function(self.heap[right_child_index], self.heap[smallest]):
+      if right_child_index < len(self.heap) and not self.comparison_function(self.heap[right_child_index], self.heap[smallest]):
           smallest = right_child_index
 
       if smallest != index:
